@@ -10,8 +10,8 @@ analyzer.heuristic()  <-- always available, offline
   |  if NEBIUS_API_KEY present (server/CLI):
   v
 nebius.callNemotron() --> POST api.tokenfactory.nebius.com/v1/chat/completions
-                          model: nvidia/Nemotron-4-Mini-Hindi-4B-Instruct (fast)
-                             or nvidia/Nemotron-3-Ultra (reasoning)
+                          model: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B (fast)
+                             or nvidia/Nemotron-3-Ultra-550b-a55b (reasoning)
                           --> strict JSON {feasibility, effortHours, risks, testPlan, verdict}
                           --> parseModelJson(), fallback to heuristic on error
 ```

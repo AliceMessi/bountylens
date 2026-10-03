@@ -1,8 +1,8 @@
 // Nebius Token Factory client (OpenAI-compatible chat completions).
 // No secrets hardcoded: key comes from NEBIUS_API_KEY env only.
 
-export const DEFAULT_MODEL = "nvidia/Nemotron-4-Mini-Hindi-4B-Instruct";
-export const REASONING_MODEL = "nvidia/Nemotron-3-Ultra";
+export const DEFAULT_MODEL = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B";
+export const REASONING_MODEL = "nvidia/Nemotron-3-Ultra-550b-a55b";
 
 export interface ChatMessage {
   role: "system" | "user";

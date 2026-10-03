@@ -21,7 +21,7 @@ Static web demo: open `docs/demo.html` in a browser (same heuristic, no backend)
 
 ## How Nemotron + Nebius are used
 
-- Client: `src/nebius.ts` calls `https://api.tokenfactory.nebius.com/v1/chat/completions` (OpenAI-compatible) with a Nemotron model (`nvidia/Nemotron-4-Mini-Hindi-4B-Instruct` default, `nvidia/Nemotron-3-Ultra` for deep reasoning).
+- Client: `src/nebius.ts` calls `https://api.tokenfactory.nebius.com/v1/chat/completions` (OpenAI-compatible) with a Nemotron model (`nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` default, `nvidia/Nemotron-3-Ultra-550b-a55b` for deep reasoning).
 - Token Factory accelerated the workflow: one endpoint for fast (Nano/Mini) and reasoning (Ultra) calls, no GPU to manage.
 - Flow: `src/index.ts` → `callNemotron(system + issue JSON)` → strict-JSON parse (`parseModelJson`) → fallback to `heuristic()` on any error so the demo never breaks.
 - No other Nebius services required; deploy target is GitHub Pages (static) + optional Nebius Serverless Endpoint for `/api/analyze`.
