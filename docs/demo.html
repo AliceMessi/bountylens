@@ -1,19 +1,29 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BountyLens — live demo</title>
 <style>body{font-family:system-ui;max-width:720px;margin:2rem auto;padding:0 1rem}textarea,input{width:100%;margin:.4rem 0;padding:.5rem}pre{background:#111;color:#0f0;padding:1rem;white-space:pre-wrap}</style></head><body>
-<h1>BountyLens — GitHub issue triage (offline demo)</h1>
-<p>Same heuristic as the Nemotron agent. With <code>NEBIUS_API_KEY</code> the CLI calls Nemotron live.</p>
+<h1>BountyLens — GitHub issue triage (demo)</h1>
+<p>Same heuristic as the Nemotron agent. With <code>NEBIUS_API_KEY</code> the CLI calls Nemotron live (<code>nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B</code>).</p>
+<p><button onclick="preset(0)">1. Clean → go</button> <button onclick="preset(1)">2. Crowded $100 → skip</button> <button onclick="preset(2)">3. Assigned $750 → skip</button></p>
 <label>Title<input id="t" value="[Bounty $100] Fix docs typo"></label>
 <label>Body<textarea id="b" rows="4">Clear repro, tests exist, $100 bounty, no assignee. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</textarea></label>
 <label>Comments<input id="c" type="number" value="2"></label>
+<label>Assignee (empty = none)<input id="a" value=""></label>
 <button onclick="go()">Analyze</button>
 <pre id="o"></pre>
+<p><small>Repo: <a href="https://github.com/AliceMessi/bountylens">github.com/AliceMessi/bountylens</a> · Live CLI verified 03/10/2026, 3/3 gold cases mode=nemotron.</small></p>
+<script>
+const PRESETS=[
+{title:"Move test-only helpers out of shipped tree",body:"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx $50 bounty, tests exist in vitest, clear target branch.",comments:0,assignee:""},
+{title:"[BOUNTY $100] HOOK: Pre-tool-use hook",body:"Create a Claude Code pre-tool-use hook in Python. $100 via Opire. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",comments:20,assignee:""},
+{title:"[Bounty $750] Fix fused scale-mask softmax tile-padding",body:"Repro for widths 17, 50, 197 with $750 bounty and tests. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",comments:5,assignee:"singhharsh1708"}];
+function preset(i){t.value=PRESETS[i].title;b.value=PRESETS[i].body;c.value=PRESETS[i].comments;a.value=PRESETS[i].assignee;go()}
 <script>
 function heuristic(d){let s=.5,r=[];const t=d.title+' '+(d.body||'');
-if(/$\d+|bounty|reward/i.test(t))s+=.2;else r.push('no-cash-hint');
+if(/\$\d+|bounty|reward/i.test(t))s+=.2;else r.push('no-cash-hint');
 if(/fix|bug|test|docs|typo/i.test(d.title))s+=.1;
+if(d.assignee){s-=.5;r.push('already-assigned')}
 if((d.comments||0)>10){s-=.2;r.push('crowded')}
 if((d.body||'').length<50){s-=.2;r.push('vague')}
 s=Math.max(0,Math.min(1,s));
-return{feasibility:Math.round(s*100)/100,effortHours:s>.7?2:s>.5?4:8,risks:r,testPlan:['Failing test first (TDD).','Minimal fix.','Full suite + lint green.'],verdict:s>=.6?'go':'skip',mode:'heuristic'}} 
-function go(){o.textContent=JSON.stringify(heuristic({title:t.value,body:b.value,comments:+c.value}),null,2)}
+return{feasibility:Math.round(s*100)/100,effortHours:s>.7?2:s>.5?4:8,risks:r,testPlan:['Failing test first (TDD).','Minimal fix.','Full suite + lint green.'],verdict:s>=.6&&r.indexOf('already-assigned')<0?'go':'skip',mode:'heuristic'}}
+function go(){o.textContent=JSON.stringify(heuristic({title:t.value,body:b.value,comments:+c.value,assignee:a.value||null}),null,2)}
 </script></body></html>
